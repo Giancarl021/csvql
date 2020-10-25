@@ -1,6 +1,6 @@
 require('dotenv').config();
 
-module.exports = function () {
+module.exports = function (files, options) {
 
     return {
         select(...args) {

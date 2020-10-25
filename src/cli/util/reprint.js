@@ -1,4 +1,5 @@
 module.exports = function (line) {
     process.stdout.clearLine();
-    console.log(line);
+    process.stdout.cursorTo(0);
+    process.stdout.write(line);
 }

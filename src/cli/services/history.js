@@ -1,28 +1,31 @@
 const size = process.env.CSVQL_HISTORY_SIZE || 1000;
 
 module.exports = function () {
-    const history = [];
+    const history = [''];
     let pointer = 0;
 
     function add(command) {
-        history.unshift(command);
+        history.splice(1, 0, command);
         if(history.length > size) {
             history.length = size;
         }
         pointer = 0;
+        console.log(history);
     }
 
     function get(index) {
         return history[index];
     }
 
-    function prev() {
-        if (pointer === 0) return get(pointer);
+    function next() {
+        if (pointer === 0) return null;
+        console.log(pointer - 1);
         return get(pointer--);
     }
 
-    function next() {
-        if(pointer === history.length - 1) return get(pointer);
+    function prev() {
+        if(pointer === history.length - 1) return null;
+        console.log(pointer + 1);
         return get(pointer++);
     }
 
