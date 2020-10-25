@@ -4,18 +4,19 @@ const createEventListeners = require('./events');
 const events = createEventListeners();
 
 module.exports = function (question) {
-    const prefixSize = appName.length + 2;
     const rl = readline.createInterface({
         input: process.stdin,
         output: process.stdout
     });
 
-    rl.write(question);
-
     rl.on('SIGINT', events.sigint);
+
+    rl.setPrompt(question, question.length + 1);
 
     return new Promise(resolve => {
         rl.on('line', answer => {
+            rl.setPrompt(question, question.length + 1);
+            rl.prompt();
             const command = answer.replace(/^(.*?)>\s/, '');
             rl.close();
             return resolve(command);

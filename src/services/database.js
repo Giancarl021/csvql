@@ -3,6 +3,7 @@ const fs = require('fs');
 const { basename } = require('path');
 const csv = require('csv-parser');
 const stripBom = require('strip-bom-stream');
+const createRowFormatter = require('../util/format-row');
 
 module.exports = function (location = null) {
     const database = createDatabase(location || ':memory:');
@@ -14,7 +15,7 @@ module.exports = function (location = null) {
 
         const table = basename(path).replace(/\.\w+$/, '');
 
-        let keys, insert;
+        let formatRow, insert;
 
         await new Promise(resolve => {
             fs.createReadStream(path)
@@ -24,9 +25,9 @@ module.exports = function (location = null) {
                 throw err;
             })
             .on('headers', headers => {
-                database.exec(`CREATE TABLE ${table} (${headers.map(header => `"${header}" text`).join(',')})`);
-                keys = headers;
-                const statement = `INSERT INTO ${table}(${headers.map(header => `"${header}"`).join(',')}) VALUES(${new Array(headers.length).fill('?').join(',')})`;
+                database.exec(`CREATE TABLE "${table}" (${headers.map(header => `"${header}" text`).join(',')})`);
+                formatRow = createRowFormatter(headers);
+                const statement = `INSERT INTO "${table}" (${headers.map(header => `"${header}"`).join(',')}) VALUES(${new Array(headers.length).fill('?').join(',')})`;
                 insert = database.prepare(statement);
             })
             .on('data', row => {
@@ -34,12 +35,6 @@ module.exports = function (location = null) {
             })
             .on('end', () => resolve());
         });
-
-        function formatRow(obj) {
-            const r = [];
-            keys.forEach(key => r.push(obj[key] || ''));
-            return r;
-        }
     }
 
     function query(statement) {
