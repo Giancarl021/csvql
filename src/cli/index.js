@@ -12,7 +12,11 @@ module.exports = async function (executor) {
         if(!command) continue;
 
         if(map[command]) {
-            console.log(await executor[command](...args));
+            try {
+                console.log(await executor[command](...args));
+            } catch (error) {
+                console.error('Error: ' + error.message);
+            }
         } else {
             console.log('Unknown command');
         }

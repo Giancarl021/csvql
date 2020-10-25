@@ -1,8 +1,24 @@
 #!/usr/bin/env node
 
+const args = require('yargs').argv;
+const Haikunator = require('haikunator');
 const cli = require('./src/cli');
 const globalize = require('./src/cli/services/global');
 const csvql = require('./index');
 
 globalize();
-const terminal = cli(csvql());
+
+const haikunator = new Haikunator();
+
+const files = args._;
+
+const persist = (args.hasOwnProperty('persist') || args.hasOwnProperty('p')) ?
+    (args.p || args.persist ?
+        (args.p || args.persist) :
+        haikunator.haikunate()
+    ) :
+    false;
+
+const instance = csvql(files, { persist });
+
+cli(instance);

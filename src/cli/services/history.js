@@ -10,7 +10,7 @@ module.exports = function () {
             history.length = size;
         }
         pointer = 0;
-        console.log(history);
+        // console.log(history);
     }
 
     function get(index) {
@@ -19,13 +19,13 @@ module.exports = function () {
 
     function next() {
         if (pointer === 0) return null;
-        console.log(pointer - 1);
+        // console.log(pointer - 1);
         return get(pointer--);
     }
 
     function prev() {
         if(pointer === history.length - 1) return null;
-        console.log(pointer + 1);
+        // console.log(pointer + 1);
         return get(pointer++);
     }
 

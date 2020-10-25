@@ -6,7 +6,7 @@ const operations = {
     schema: require('./src/operations/schema'),
 }
 
-module.exports = function (files, options = {}) {
+module.exports = function (files = [], options = {}) {
     const database = createDatabase(options.persist || null);
 
     files.forEach(database.addCsv);
