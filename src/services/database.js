@@ -2,6 +2,7 @@ const createDatabase = require('better-sqlite3');
 const fs = require('fs');
 const { basename } = require('path');
 const csv = require('csv-parser');
+const stripBom = require('strip-bom-stream');
 
 module.exports = function (location = null) {
     const database = createDatabase(location || ':memory:');
@@ -17,9 +18,10 @@ module.exports = function (location = null) {
 
         await new Promise(resolve => {
             fs.createReadStream(path)
+            .pipe(stripBom())
             .pipe(csv(true))
             .on('error', err => {
-                throw new Error(err);
+                throw err;
             })
             .on('headers', headers => {
                 database.exec(`CREATE TABLE ${table} (${headers.map(header => `"${header}" text`).join(',')})`);
@@ -45,11 +47,13 @@ module.exports = function (location = null) {
         return st.all();
     }
 
-    // console.log(database.exec('select * from A'));
-
-    return {
+    const db = {
         query,
         close: database.close.bind(database),
         addCsv
-    }
+    };
+
+    global.database = db;
+
+    return db;
 }

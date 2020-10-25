@@ -23,6 +23,7 @@ module.exports = function () {
 
     function sigint() {
         console.log(`\nFinishing ${appName} session...`);
+        if(database) database.close();
         process.exit(0);
     }
 

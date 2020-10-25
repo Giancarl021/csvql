@@ -18,6 +18,7 @@
     "dotenv": "^8.2.0",
     "haikunator": "^2.1.2",
     "keypress": "^0.2.1",
+    "strip-bom-stream": "^4.0.0",
     "yargs": "^16.1.0"
   }
 }
