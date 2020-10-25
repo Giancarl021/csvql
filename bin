@@ -1,0 +1,8 @@
+#!/usr/bin/env node
+
+const cli = require('./src/cli');
+const globalize = require('./src/cli/services/global');
+const csvql = require('./index');
+
+globalize();
+const terminal = cli(csvql());

@@ -1,18 +1,20 @@
 {
-  "name": "textql-gui",
+  "name": "csvql",
   "version": "0.1.0",
-  "description": "A GUI to textql",
-  "main": "server.js",
+  "main": "index.js",
   "repository": "https://github.com/Giancarl021/textql-gui",
   "author": "Giancarlo Fontela da Luz <gian.f.luz@hotmail.com>",
   "license": "MIT",
+  "bin": {
+    "csvql": "bin"
+  },
   "scripts": {
-    "start": "node .",
-    "build": "docker build -t textql-gui ."
+    "start": "node bin"
   },
   "dependencies": {
-    "cors": "^2.8.5",
+    "better-sqlite3": "^7.1.1",
+    "ctrl-c": "^2.3.2",
     "dotenv": "^8.2.0",
-    "express": "^4.17.1"
+    "keypress": "^0.2.1"
   }
 }
