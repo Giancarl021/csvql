@@ -2,16 +2,19 @@ const question = require('./util/question');
 const cleanup = require('./util/cleanup');
 const createExecutionMap = require('./util/execution-map');
 
+const appName = process.env.CSVQL_APP_NAME || 'csvql';
+
 module.exports = async function (executor) {
-    const map = createExecutionMap(executor);
+    const map = createExecutionMap(executor, ['close']);
 
-    while(true) {
-        const response = await question(`${appName}> `);
-        const [command, ...args] = cleanup(response, e => e.toLowerCase());
+    question(`${appName}> `, callback, { db: executor });
 
-        if(!command) continue;
+    async function callback(response) {
+        const [command, ...args] = cleanup(response, (e, i) => i === 0 ? e.toLowerCase() : e);
 
-        if(map[command]) {
+        if (!command) return;
+
+        if (map[command]) {
             try {
                 console.log(await executor[command](...args));
             } catch (error) {

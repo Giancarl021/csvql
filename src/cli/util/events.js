@@ -1,8 +1,11 @@
 const useHistory = require('../services/history');
 const reprint = require('./reprint');
 
+const appName = process.env.CSVQL_APP_NAME || 'csvql';
+
 module.exports = function () {
     const history = useHistory();
+    let opt = {};
 
     const keys = {
         up() {
@@ -21,9 +24,11 @@ module.exports = function () {
         }
     }
 
-    function sigint() {
+    async function sigint() {
         console.log(`\nFinishing ${appName} session...`);
-        if(database) database.close();
+        if(opt.db) {
+            await opt.db.close();
+        }
         process.exit(0);
     }
 
@@ -34,8 +39,13 @@ module.exports = function () {
         }
     }
 
+    function setOptions(options) {
+        opt = options;
+    }
+
     return {
         sigint,
-        key
+        key,
+        setOptions
     };
 }

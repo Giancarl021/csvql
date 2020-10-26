@@ -3,25 +3,23 @@ const createEventListeners = require('./events');
 
 const events = createEventListeners();
 
-module.exports = function (question) {
+module.exports = function (question, callback, eventsOptions = {}) {
+    events.setOptions(eventsOptions);
     const rl = readline.createInterface({
         input: process.stdin,
-        output: process.stdout
+        output: process.stdout,
+        prompt: question
     });
 
     rl.on('SIGINT', events.sigint);
 
-    rl.setPrompt(question, question.length + 1);
-
-    return new Promise(resolve => {
-        rl.on('line', answer => {
-            rl.setPrompt(question, question.length + 1);
+    rl.on('line', async answer => {
+            const command = answer.replace(/^[\w\s]+>\s/, '');
+            await callback(command);
             rl.prompt();
-            const command = answer.replace(/^(.*?)>\s/, '');
-            rl.close();
-            return resolve(command);
         });
-    });
+    
+    rl.prompt();
 }
 
 readline.emitKeypressEvents(process.stdin);

@@ -3,22 +3,30 @@
 const args = require('yargs').argv;
 const Haikunator = require('haikunator');
 const cli = require('./src/cli');
-const globalize = require('./src/cli/services/global');
 const csvql = require('./index');
-
-globalize();
-
-const haikunator = new Haikunator();
+const path = require('path');
 
 const files = args._;
+const haikunator = new Haikunator();
 
 const persist = (args.hasOwnProperty('persist') || args.hasOwnProperty('p')) ?
-    (args.p || args.persist ?
+    path.resolve(
+        __dirname,
+        'data',
+        (typeof args.p !== 'boolean' && args.persist !== 'boolean' ?
         (args.p || args.persist) :
-        haikunator.haikunate()
+        haikunator.haikunate()) + '.sqlite'
     ) :
     false;
+const verbose = args.verbose;
 
-const instance = csvql(files, { persist });
+async function main() {
+    const instance = await csvql(files, { persist });
+    cli(instance);
+}
 
-cli(instance);
+main().catch(err => {
+    if(verbose) console.error(err);
+    else console.error('Runtime Error: ' + err.message);
+    process.exit(1);
+});

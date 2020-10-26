@@ -3,7 +3,17 @@ module.exports = function (keys) {
 
     return data => {
         const r = [];
-        keys.forEach(key => r.push(data[key] || ''));
+        keys.forEach(key => r.push(parse(data[key])));
         return r;
+    }
+
+    function parse(row) {
+        if(!row && typeof row !== 'number') return 'NULL';
+
+        if(row === 'true' || row === 'false') {
+            return row === 'true' ? 1 : 0;
+        }
+
+        return row;
     }
 }
