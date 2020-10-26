@@ -3,7 +3,7 @@
   "description": "An CLI interface to quickly query CSV data",
   "version": "0.1.0",
   "main": "index.js",
-  "repository": "https://github.com/Giancarl021/textql-gui",
+  "repository": "https://github.com/Giancarl021/csvql",
   "author": "Giancarlo Fontela da Luz <gian.f.luz@hotmail.com>",
   "license": "MIT",
   "bin": {
