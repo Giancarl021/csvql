@@ -9,11 +9,36 @@ const getColumns = require('./column-parser');
 
 module.exports = async function (fromPath = null, persistPath = null) {
     const database = createDatabase(':memory:');
+
+    database.pragma('journal_mode = WAL');
     const tables = [];
 
     if(fromPath) {
         const disk = createDatabase(fromPath);
-        await disk.backup(':memory:');
+        
+        const importedTables = disk.prepare('SELECT * FROM sqlite_master').all();
+
+        await Promise.all(
+            importedTables.map(async ({ sql, name }) => {
+                database.exec(sql);
+                const rows = disk.prepare(`select * from "${name}"`).all();
+                const headers = Object.keys(rows[0]);
+                const formatRow = createRowFormatter(headers);
+                const columns = getColumns(headers, rows);
+
+                const statement = `INSERT INTO "${name}" (${headers.map(header => `"${header}"`).join(',')}) VALUES(${new Array(headers.length).fill('?').join(',')})`;
+                const insert = database.prepare(statement);
+
+                rows.forEach(row => insert.run(...formatRow(row)));
+
+                tables.push({
+                    name,
+                    columns
+                });
+            })
+        );
+
+        disk.close();
     }
 
     async function addCsv(path, asTable = null) {

@@ -22,7 +22,7 @@ const persist = (args.hasOwnProperty('persist') || args.hasOwnProperty('p')) ?
 const from = args.from || args.f ?
     (path.isAbsolute(args.from || args.f) ?
     args.from || args.f :
-    path.resolve(__dirname, 'data', args.from || args.f)) :
+    path.resolve(__dirname, 'data', args.from || args.f + '.sqlite')) :
     null;
 
 const verbose = args.verbose;
