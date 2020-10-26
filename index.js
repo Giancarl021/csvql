@@ -3,7 +3,7 @@ const createDatabase = require('./src/services/database');
 
 const operations = {
     select: require('./src/operations/select'),
-    schema: require('./src/operations/schema'),
+    schema: require('./src/operations/schema')
 }
 
 module.exports = async function (files = [], options = {}) {
@@ -27,7 +27,6 @@ module.exports = async function (files = [], options = {}) {
             if(!op || typeof schemer[op] !== 'function') return 'Schema> Unknown operation';
             return await schemer[op](...args);
         },
-
         close: database.close
     }
 }
