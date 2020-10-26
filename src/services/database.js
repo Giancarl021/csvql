@@ -6,8 +6,13 @@ const stripBom = require('strip-bom');
 const createRowFormatter = require('../util/format-row');
 const getColumns = require('./column-parser');
 
-module.exports = function (persistPath = null) {
+module.exports = async function (fromPath = null, persistPath = null) {
     const database = createDatabase(':memory:');
+
+    if(fromPath) {
+        const disk = createDatabase(fromPath);
+        await disk.backup(':memory:');
+    }
 
     async function addCsv(path) {
         if(!fs.existsSync(path) || !fs.lstatSync(path).isFile()) {
@@ -46,13 +51,18 @@ module.exports = function (persistPath = null) {
     }
 
     async function close() {
-        if(persistPath) await database.backup(persistPath);
+        if(persistPath) await save(persistPath);
         database.close();
+    }
+
+    async function save(path) {
+        await database.save(path);
     }
 
     return {
         query,
         close,
+        save,
         addCsv
     };
 }

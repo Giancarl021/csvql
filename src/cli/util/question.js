@@ -10,7 +10,6 @@ module.exports = function (question, callback, eventsOptions = {}) {
         output: process.stdout,
         prompt: question
     });
-
     rl.on('SIGINT', events.sigint);
 
     rl.on('line', async answer => {
@@ -20,6 +19,10 @@ module.exports = function (question, callback, eventsOptions = {}) {
         });
     
     rl.prompt();
+
+    return () => {
+        rl.emit('SIGINT');
+    };
 }
 
 readline.emitKeypressEvents(process.stdin);

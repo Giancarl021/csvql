@@ -18,10 +18,17 @@ const persist = (args.hasOwnProperty('persist') || args.hasOwnProperty('p')) ?
         haikunator.haikunate()) + '.sqlite'
     ) :
     false;
+
+const from = args.from || args.f ?
+    (path.isAbsolute(args.from || args.f) ?
+    args.from || args.f :
+    path.resolve(__dirname, 'data', args.from || args.f)) :
+    null;
+
 const verbose = args.verbose;
 
 async function main() {
-    const instance = await csvql(files, { persist });
+    const instance = await csvql(files, { persist, from });
     cli(instance);
 }
 

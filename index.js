@@ -7,7 +7,7 @@ const operations = {
 }
 
 module.exports = async function (files = [], options = {}) {
-    const database = createDatabase(options.persist || null);
+    const database = await createDatabase(options.from, options.persist || options.from);
 
     try {
         await Promise.all(files.map(database.addCsv));

@@ -1,28 +1,9 @@
-const useHistory = require('../services/history');
-const reprint = require('./reprint');
-
 const appName = process.env.CSVQL_APP_NAME || 'csvql';
 
 module.exports = function () {
-    const history = useHistory();
     let opt = {};
 
-    const keys = {
-        up() {
-            const prev = history.prev();
-            if(!prev) return;
-            reprint(`${appName}> ${prev}`);
-        },
-
-        down() {
-            const next = history.next();
-            if(!next) return;
-            reprint(`${appName}> ${next}`);
-        },
-        return() {
-            history.add('command X');
-        }
-    }
+    const keys = {}
 
     async function sigint() {
         console.log(`\nFinishing ${appName} session...`);
