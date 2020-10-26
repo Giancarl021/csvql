@@ -71,7 +71,10 @@ module.exports = async function (fromPath = null, persistPath = null) {
     }
 
     async function save(path) {
-        await database.save(path);
+        fs.mkdirSync(path.replace(basename(path), ''), {
+            recursive: true
+        });
+        await database.backup(path);
     }
 
     return {

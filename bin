@@ -29,6 +29,13 @@ const verbose = args.verbose;
 
 async function main() {
     const instance = await csvql(files, { persist, from });
+
+    if(from) {
+        console.log('Importing session from: ' + from);
+    } else if (persist) {
+        console.log('The session will be saved on: ' + persist);
+    }
+
     cli(instance);
 }
 
