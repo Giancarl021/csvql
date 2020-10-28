@@ -15,7 +15,8 @@ module.exports = async function (fromPath = null, persistPath = null) {
 
     if(fromPath) {
         const disk = createDatabase(fromPath);
-        
+        disk.pragma('journal_mode = WAL');
+
         const importedTables = disk.prepare('SELECT * FROM sqlite_master').all();
 
         await Promise.all(

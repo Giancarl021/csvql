@@ -22,7 +22,7 @@ module.exports = function (database) {
 
                 const [padL, padR] = getPadding((width - 2 - table.name.length) / 2);
 
-                const tableName = table.name > width - 2 ?
+                const tableName = table.name.length > width - 2 ?
                     table.name.slice(0, width - 5) + '...' :
                     padL + table.name + padR;
 
@@ -69,6 +69,7 @@ module.exports = function (database) {
     }
 
     function getPadding(n) {
+        if (n <= 0) return ['', ''];
         return [pad(Math.floor(n)), pad(Math.ceil(n))];
 
         function pad(n) {
