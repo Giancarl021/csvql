@@ -43,6 +43,8 @@ module.exports = async function (fromPath = null, persistPath = null, disk, deli
     }
 
     async function addCsv(path, asTable = null) {
+        const st = Date.now();
+
         const _path = locate(path, true);
         if(!fs.existsSync(_path) || !fs.lstatSync(_path).isFile()) {
             throw new Error('Invalid input file: ' + _path);
@@ -76,6 +78,8 @@ module.exports = async function (fromPath = null, persistPath = null, disk, deli
             name: table,
             columns
         });
+
+        return (Date.now() - st) / 1000;
     }
 
     function drop(tableName) {

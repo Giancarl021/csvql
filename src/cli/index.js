@@ -2,11 +2,12 @@ const question = require('./util/question');
 const cleanup = require('./util/cleanup');
 const createExecutionMap = require('./util/execution-map');
 const help = require('./services/help');
+const formatOutput = require('./services/format-output');
 
 const appName = process.env.CSVQL_APP_NAME || 'csvql';
 
 module.exports = async function (executor) {
-    const map = createExecutionMap(executor, [ 'close' ]);
+    const map = createExecutionMap(executor, ['close']);
 
     const kill = question(`${appName}> `, callback, { db: executor });
 
@@ -15,7 +16,7 @@ module.exports = async function (executor) {
 
         if (!command) return;
 
-        if(command === 'exit') {
+        if (command === 'exit') {
             kill();
             return;
         }
@@ -27,7 +28,9 @@ module.exports = async function (executor) {
 
         if (map[command]) {
             try {
-                console.log(await executor[command](...args));
+                const result = await executor[command](...args);
+                
+                console.log(formatOutput(result, command));
             } catch (error) {
                 console.error('Error: ' + error.message);
             }
