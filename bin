@@ -5,6 +5,13 @@ const Haikunator = require('haikunator');
 const cli = require('./src/cli');
 const csvql = require('./index');
 const path = require('path');
+const fs = require('fs');
+
+const dataPath = path.resolve(__dirname, 'data');
+
+if (!fs.existsSync(dataPath)) {
+    fs.mkdirSync(dataPath);
+}
 
 const files = args._;
 const haikunator = new Haikunator();
@@ -25,10 +32,15 @@ const from = args.from || args.f ?
     path.resolve(__dirname, 'data', args.from || args.f + '.sqlite')) :
     null;
 
+const disk = args.disk || args.D ?
+    path.resolve(__dirname, 'data', 'temp.sqlite') :
+    null;
+
 const verbose = args.verbose;
+const delimiter = args.d || args.delimiter || ',';
 
 async function main() {
-    const instance = await csvql(files, { persist, from });
+    const instance = await csvql(files, { persist, from, disk, delimiter });
 
     if(from) {
         console.log('Importing session from: ' + from);

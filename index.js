@@ -7,7 +7,7 @@ const operations = {
 }
 
 module.exports = async function (files = [], options = {}) {
-    const database = await createDatabase(options.from, options.persist || options.from);
+    const database = await createDatabase(options.from, options.persist || options.from, options.disk, options.delimiter);
 
     const schemer = operations.schema(database);
 

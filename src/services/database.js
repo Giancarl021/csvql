@@ -7,8 +7,8 @@ const stripBom = require('strip-bom');
 const createRowFormatter = require('../util/format-row');
 const getColumns = require('./column-parser');
 
-module.exports = async function (fromPath = null, persistPath = null) {
-    const database = createDatabase(':memory:');
+module.exports = async function (fromPath = null, persistPath = null, disk, delimiter = ',') {
+    const database = createDatabase(disk || ':memory:');
 
     database.pragma('journal_mode = WAL');
     const tables = [];
@@ -55,7 +55,7 @@ module.exports = async function (fromPath = null, persistPath = null) {
             cast: true,
             columns: true,
             trim: true,
-            delimiter: ';'
+            delimiter
         });
 
         if (!rows.length) return;
@@ -93,8 +93,9 @@ module.exports = async function (fromPath = null, persistPath = null) {
     }
 
     async function close() {
-        if(persistPath) await save(persistPath);
+        if (persistPath) await save(persistPath);
         database.close();
+        if (disk) fs.unlinkSync(disk);
     }
 
     async function save(path) {
