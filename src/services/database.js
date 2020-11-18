@@ -54,7 +54,8 @@ module.exports = async function (fromPath = null, persistPath = null) {
         const rows = csv(content, {
             cast: true,
             columns: true,
-            trim: true
+            trim: true,
+            delimiter: ';'
         });
 
         if (!rows.length) return;

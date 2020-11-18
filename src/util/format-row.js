@@ -8,7 +8,7 @@ module.exports = function (keys) {
     }
 
     function parse(row) {
-        if(!row && typeof row !== 'number') return 'NULL';
+        if(!row && typeof row !== 'number') return null;
 
         if(row === 'true' || row === 'false') {
             return row === 'true' ? 1 : 0;
