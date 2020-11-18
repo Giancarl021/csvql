@@ -8,11 +8,12 @@ const operations = {
 
 module.exports = async function (files = [], options = {}) {
     const database = await createDatabase(options.from, options.persist || options.from, options.disk, options.delimiter);
-
     const schemer = operations.schema(database);
 
+    let loadTime = 0;
+
     try {
-        await Promise.all(files.map(path => database.addCsv(path)));
+        await Promise.all(files.map(async path => loadTime += await database.addCsv(path)));
     } catch (err) {
         throw new Error('Failed to import files: ' + err.message);
     }
@@ -27,6 +28,7 @@ module.exports = async function (files = [], options = {}) {
             if(!op || typeof schemer[op] !== 'function') return 'Schema> Unknown operation';
             return await schemer[op](...args);
         },
-        close: database.close
+        close: database.close,
+        loadTime
     }
 }

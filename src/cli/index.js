@@ -7,7 +7,11 @@ const formatOutput = require('./services/format-output');
 const appName = process.env.CSVQL_APP_NAME || 'csvql';
 
 module.exports = async function (executor) {
-    const map = createExecutionMap(executor, ['close']);
+    const map = createExecutionMap(executor, ['close', 'loadTime']);
+
+    if (executor.loadTime) {
+        console.log(`Table(s) loaded in ${executor.loadTime.toFixed(2)} seconds`);
+    }
 
     const kill = question(`${appName}> `, callback, { db: executor });
 
@@ -29,7 +33,7 @@ module.exports = async function (executor) {
         if (map[command]) {
             try {
                 const result = await executor[command](...args);
-                
+
                 console.log(formatOutput(result, command));
             } catch (error) {
                 console.error('Error: ' + error.message);
