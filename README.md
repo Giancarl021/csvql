@@ -2,10 +2,6 @@
 
 A module to quickly query CSV data as a SQL
 
-### Demo
-
-![Demo](docs/demo.gif)
-
 ## Installation
 
 ### CLI
@@ -51,6 +47,8 @@ csvql [path/to/file1.csv[ path/to/file2.csv [...]]]
 
 ##### Arguments
 
+Each argument needs to point to a CSV file.
+
 ##### Flags
 
 * ``-p | --persist``: Create a disk database with the data when the session is closed. Values: ``<session-name> | null``. If null a random name will be used;
@@ -86,7 +84,21 @@ Manages the schemes on the current session
 
 **Operations**
 
+*list*
+List all the tables on current session, with the types.
+
+*import*
+Import CSV files, follows the syntax:
+```
+csvql> schema import path/to/file.csv [as table] [, ...]
+```
+
+*drop*
+Delete a table on current session.
+
 ##### Select
+SQL SELECT Query, from [sqlite](https://www.sqlite.org/index.html).
 
 ### API
 
+**WIP**
