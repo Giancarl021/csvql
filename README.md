@@ -2,6 +2,11 @@
 
 A module to quickly query CSV data as a SQL
 
+Similar packages:
+
+(Node) [tables](https://www.npmjs.com/package/tables)
+(Go) [textql](https://github.com/dinedal/textql)
+
 ## Installation
 
 ### CLI
