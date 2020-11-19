@@ -8,9 +8,14 @@ const path = require('path');
 const fs = require('fs');
 
 const dataPath = path.resolve(__dirname, 'data');
+const tempPath = path.resolve(__dirname, 'temp');
 
 if (!fs.existsSync(dataPath)) {
     fs.mkdirSync(dataPath);
+}
+
+if (!fs.existsSync(tempPath)) {
+    fs.mkdirSync(tempPath);
 }
 
 const files = args._;
@@ -20,7 +25,7 @@ const persist = (args.hasOwnProperty('persist') || args.hasOwnProperty('p')) ?
     path.resolve(
         __dirname,
         'data',
-        (typeof args.p !== 'boolean' && args.persist !== 'boolean' ?
+        (typeof args.p !== 'boolean' && args.persist !== 'boolean' && !String(args.p || args.persist).includes('/') ?
         (args.p || args.persist) :
         haikunator.haikunate()) + '.sqlite'
     ) :
@@ -33,7 +38,7 @@ const from = args.from || args.f ?
     null;
 
 const disk = args.disk || args.D ?
-    path.resolve(__dirname, 'data', 'temp.sqlite') :
+    path.resolve(__dirname, 'temp', `${Date.now()}.sqlite`) :
     null;
 
 const verbose = args.verbose;

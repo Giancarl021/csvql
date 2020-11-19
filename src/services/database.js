@@ -14,6 +14,10 @@ module.exports = async function (fromPath = null, persistPath = null, disk, deli
     const tables = [];
 
     if(fromPath) {
+        if(!fs.existsSync(fromPath)) {
+            throw new Error('Invalid import path: ' + fromPath);
+        }
+
         const disk = createDatabase(fromPath);
         disk.pragma('journal_mode = WAL');
 

@@ -1,6 +1,6 @@
 # csvql
 
-An CLI interface to quickly query CSV data
+A module to quickly query CSV data as a SQL
 
 ### Demo
 
@@ -27,13 +27,13 @@ yarn add global csvql
 npm:
 
 ```bash
-npm install --global csvql
+npm install csvql
 ```
 
 yarn:
 
 ```bash
-yarn add global csvql
+yarn add csvql
 ```
 
 ## Usage
@@ -42,7 +42,51 @@ This module can be used in two formats: CLI and API.
 
 ### CLI
 
+#### Create session
+To start the application you use this command on terminal:
 
+```bash
+csvql [path/to/file1.csv[ path/to/file2.csv [...]]]
+```
+
+##### Arguments
+
+##### Flags
+
+* ``-p | --persist``: Create a disk database with the data when the session is closed. Values: ``<session-name> | null``. If null a random name will be used;
+* ``-d | --delimiter``: The delimiter of the CSV file. Default is ``,``. Values: ``<delimiter>``;
+* ``-D | --disk``: Create the session on a in-disk database, useful when the CSV is too large to a in-memory database;
+* ``-f | --from``: Restart a persistent session in-memory. Values: ``<session-name>``; If invalid the startup will be aborted;
+* ``--verbose``: Show top level JavaScript errors if they occur.
+
+After that the interactive terminal of csvql will start.
+
+#### Commands
+The CLI have 4 commands:
+
+##### Help
+Prints all the available commands.
+
+```
+csvql> help
+select <sql query>: Queries into imported schemas.
+schema <operation>: Manage the schemas of the current session.
+  list: List all tables and columns available.
+  import <path [as <tableName>[, ...]]>: Import a new schema from CSV file(s).
+  drop <tableName>: Delete a table of the current session.
+help: List all available commands.
+exit: Close the current session.
+```
+
+##### Exit
+Close the application, equivalent of ``^C``.
+
+##### Schema
+Manages the schemes on the current session
+
+**Operations**
+
+##### Select
 
 ### API
 

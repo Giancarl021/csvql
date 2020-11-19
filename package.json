@@ -1,6 +1,6 @@
 {
   "name": "csvql",
-  "description": "An CLI interface to quickly query CSV data",
+  "description": "A module to quickly query CSV data as a SQL",
   "version": "0.1.0",
   "main": "index.js",
   "repository": "https://github.com/Giancarl021/csvql",
