@@ -25,7 +25,7 @@ module.exports = async function (files = [], options = {}) {
 
         async schema(command, ...args) {
             const op = String(command).toLowerCase();
-            if(!op || typeof schemer[op] !== 'function') return 'Schema> Unknown operation';
+            if(!op || typeof schemer[op] !== 'function') throw new Error('Unknown operation');
             return await schemer[op](...args);
         },
         close: database.close,
