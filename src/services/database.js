@@ -88,6 +88,20 @@ module.exports = async function (fromPath = null, persistPath = null, disk) {
         return (Date.now() - st) / 1000;
     }
 
+    function rename(tableName, newName) {
+        try {
+            database
+                .prepare(`ALTER TABLE "${tableName}" RENAME TO "${newName}"`)
+                .run();
+            
+            const i = tables.findIndex(t => t.name === tableName);
+            tables[i].name = newName;
+            
+        } catch (err) {
+            throw err;
+        }
+    }
+
     function drop(tableName) {
         database
             .prepare(`DROP TABLE IF EXISTS "${tableName}"`)
@@ -121,6 +135,7 @@ module.exports = async function (fromPath = null, persistPath = null, disk) {
         save,
         tables,
         drop,
+        rename,
         addCsv
     };
 }

@@ -27,11 +27,17 @@ module.exports = function (database) {
                 database.addCsv(file.path, file.name)
                 .then(d => delta += d)
                 .catch(err => {
-                    throw new Error(`Failed to import ${file.path}: ${err.message}`);
+                    throw new Error(`Failed to import${file.path ? ' ' + file.path : ''}: ${err.message}`);
                 })
             ));
 
             return delta;
+        },
+
+        rename(tableName, newName) {
+            if (!tableName || !newName) throw new Error('Missing parameters');
+
+            database.rename(tableName, newName);
         }
     }
 }
