@@ -1,13 +1,14 @@
 const createDatabase = require('better-sqlite3');
 const fs = require('fs');
 const { basename } = require('path');
+const { detect } = require('csv-string');
 const locate = require('../util/locate');
 const csv = require('csv-parse/lib/sync');
 const stripBom = require('strip-bom');
 const createRowFormatter = require('../util/format-row');
 const getColumns = require('./column-parser');
 
-module.exports = async function (fromPath = null, persistPath = null, disk, delimiter = ',') {
+module.exports = async function (fromPath = null, persistPath = null, disk) {
     const database = createDatabase(disk || ':memory:');
 
     database.pragma('journal_mode = WAL');
@@ -56,6 +57,7 @@ module.exports = async function (fromPath = null, persistPath = null, disk, deli
 
         const table = (asTable ? asTable.trim() : false) || basename(_path).replace(/\.\w+$/, '');
         const content = stripBom(fs.readFileSync(_path, 'utf8'));
+        const delimiter = detect(content);
 
         const rows = csv(content, {
             cast: true,

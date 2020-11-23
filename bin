@@ -42,10 +42,9 @@ const disk = args.disk || args.D ?
     null;
 
 const verbose = args.verbose;
-const delimiter = args.d || args.delimiter || ',';
 
 async function main() {
-    const instance = await csvql(files, { persist, from, disk, delimiter });
+    const instance = await csvql(files, { persist, from, disk });
 
     if(from) {
         console.log('Importing session from: ' + from);
