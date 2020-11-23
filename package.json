@@ -1,7 +1,7 @@
 {
   "name": "csvql",
   "description": "A module to quickly query CSV data as a SQL",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "main": "index.js",
   "repository": "https://github.com/Giancarl021/csvql",
   "author": "Giancarlo Fontela da Luz <gian.f.luz@hotmail.com>",
