@@ -6,8 +6,15 @@ const operations = {
     schema: require('./src/operations/schema')
 }
 
-module.exports = async function (files = [], options = {}) {
-    const database = await createDatabase(options.from, options.persist || options.from, options.disk);
+const defaultOptions = {
+    from: null,
+    persist: null,
+    disk: null,
+    parseCommaAsDecimal: false
+};
+
+module.exports = async function (files = [], options = defaultOptions) {
+    const database = await createDatabase(options.from, options.persist || options.from, options.disk, options.parseCommaAsDecimal);
     const schemer = operations.schema(database);
 
     let loadTime = 0;
@@ -25,7 +32,7 @@ module.exports = async function (files = [], options = {}) {
 
         async schema(command, ...args) {
             const op = String(command).toLowerCase();
-            if(!op || typeof schemer[op] !== 'function') throw new Error('Unknown operation');
+            if (!op || typeof schemer[op] !== 'function') throw new Error('Unknown operation');
             return await schemer[op](...args);
         },
         close: database.close,

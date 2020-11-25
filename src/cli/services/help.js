@@ -4,6 +4,7 @@ module.exports = function () {
         '  list: List all tables and columns available.\n' +
         '  import <path [as <tableName>[, ...]]>: Import a new schema from CSV file(s).\n' +
         '  drop <tableName>: Delete a table of the current session.\n' +
+        '  rebane <tableName> <newTableName>: Rename a table of the current session.\n' +
         'help: List all available commands.\n' +
         'exit: Close the current session.\n';
 }

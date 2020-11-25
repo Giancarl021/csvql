@@ -42,9 +42,10 @@ const disk = args.disk || args.D ?
     null;
 
 const verbose = args.verbose;
+const parseCommaAsDecimal = args.N || args['parse-number-commas'];
 
 async function main() {
-    const instance = await csvql(files, { persist, from, disk });
+    const instance = await csvql(files, { persist, from, disk, parseCommaAsDecimal });
 
     if(from) {
         console.log('Importing session from: ' + from);

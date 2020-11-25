@@ -3,12 +3,17 @@ const fs = require('fs');
 const { basename } = require('path');
 const { detect } = require('csv-string');
 const locate = require('../util/locate');
-const csv = require('csv-parse/lib/sync');
-const stripBom = require('strip-bom');
+const csv = require('fast-csv');
+const stripBom = require('strip-bom-stream');
 const createRowFormatter = require('../util/format-row');
 const getColumns = require('./column-parser');
 
-module.exports = async function (fromPath = null, persistPath = null, disk) {
+const firstLines = require('../util/first-lines');
+const createCaster = require('../util/cast-row');
+const parseRow = require('../util/parse-row');
+const commaNumber = require('../util/comma-numbers');
+
+module.exports = async function (fromPath = null, persistPath = null, disk = null, parseNumbersWithCommas = false) {
     const database = createDatabase(disk || ':memory:');
 
     database.pragma('journal_mode = WAL');
@@ -55,30 +60,74 @@ module.exports = async function (fromPath = null, persistPath = null, disk) {
             throw new Error('Invalid input file: ' + _path);
         }
 
+        const [meta, ...lines] = (await firstLines(_path, 10))
+            .split('\n');
+        let skipFirstLine = false,
+            delimiter,
+            headers,
+            columns,
+            castRow;
+
+        if (/sep=./i.test(meta)) {
+            if (!lines.length) return;
+            skipFirstLine = true;
+            delimiter = meta
+                .split('sep=')
+                .pop()
+                .slice(0, 1);
+
+            headers = parseRow(lines[0], delimiter);
+
+            castRow = createCaster(headers);
+
+            columns = getColumns(
+                headers,
+                lines
+                    .slice(1)
+                    .map(r => castRow(parseRow(r, delimiter), parseNumbersWithCommas))
+            );
+        } else {
+            if (![meta, ...lines].length) return;
+            delimiter = detect(`${meta}\n${lines.join('\n')}`);
+            headers = parseRow(meta, delimiter);
+
+            castRow = createCaster(headers);
+
+            columns = getColumns(headers, lines.map(r => castRow(parseRow(r, delimiter), parseNumbersWithCommas)));
+        }
+
         const table = (asTable ? asTable.trim() : false) || basename(_path).replace(/\.\w+$/, '');
-        const content = stripBom(fs.readFileSync(_path, 'utf8'));
-        const delimiter = detect(content);
 
-        const rows = csv(content, {
-            cast: true,
-            columns: true,
-            trim: true,
-            delimiter
-        });
-
-        if (!rows.length) return;
-
-        const headers = Object.keys(rows[0]);
-        const formatRow = createRowFormatter(headers);
-
-        const columns = getColumns(headers, rows);
-
-        database.exec(`CREATE TABLE "${table}"(${columns.map(col => `"${col.name}" ${col.type}`).join(',')})`);
+        database.exec(`CREATE TABLE "${table}" (${columns.map(col => `"${col.name}" ${col.type}`).join(',')})`);
 
         const statement = `INSERT INTO "${table}" (${headers.map(header => `"${header}"`).join(',')}) VALUES(${new Array(headers.length).fill('?').join(',')})`;
         const insert = database.prepare(statement);
 
-        rows.forEach(row => insert.run(...formatRow(row)));
+        const formatRow = createRowFormatter(headers);
+
+        const readStream = fs.createReadStream(_path, { encoding: 'utf8' });
+
+        await new Promise((resolve, reject) => {
+            readStream
+                .pipe(stripBom())
+                .pipe(csv.parse({
+                    headers: true,
+                    trim: true,
+                    delimiter,
+                    skipLines: skipFirstLine ? 1 : 0,
+                    ignoreEmpty: true
+                }))
+                .on('data', row => {
+                    const r = formatRow(row);
+                    console.log(r);
+                    insert.run(...(parseNumbersWithCommas ? r.map(commaNumber) : r));
+                })
+                .on('error', reject)
+                .on('end', () => {
+                    readStream.close();
+                    resolve();
+                });
+        });
 
         tables.push({
             name: table,
