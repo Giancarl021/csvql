@@ -119,7 +119,6 @@ module.exports = async function (fromPath = null, persistPath = null, disk = nul
                 }))
                 .on('data', row => {
                     const r = formatRow(row);
-                    console.log(r);
                     insert.run(...(parseNumbersWithCommas ? r.map(commaNumber) : r));
                 })
                 .on('error', reject)

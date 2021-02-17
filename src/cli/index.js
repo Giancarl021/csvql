@@ -34,7 +34,7 @@ module.exports = async function (executor) {
             try {
                 const result = await executor[command](...args);
 
-                console.log(formatOutput(result, command));
+                console.log(formatOutput(result, command, args));
             } catch (error) {
                 console.error('Error: ' + error.message);
             }

@@ -2,13 +2,16 @@ const { table: createTable } = require('table');
 const createRowFormatter = require('../../util/format-row');
 const getPadding = require('../util/padding');
 
-module.exports = function (result, command) {
+module.exports = function (result, command, args) {
     let str = result;
 
     switch (command) {
         case 'select':
             if (typeof result === 'object') {
-                if (!result.length) {
+                if(args.map(e => String(e).toLowerCase()).includes('--json')) {
+                    str = JSON.stringify(result, null, 2);
+                    break;
+                } else if (!result.length) {
                     str = '';
                     break;
                 }
