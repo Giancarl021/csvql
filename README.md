@@ -77,6 +77,7 @@ schema <operation>: Manage the schemas of the current session.
   list: List all tables and columns available.
   import <path [as <tableName>[, ...]]>: Import a new schema from CSV file(s).
   drop <tableName>: Delete a table of the current session.
+  rename <tableName> <newTableName>: Rename a table of the current session.
 help: List all available commands.
 exit: Close the current session.
 ```

@@ -22,5 +22,10 @@
     "strip-bom-stream": "^4.0.0",
     "table": "^6.0.3",
     "yargs": "^16.1.0"
-  }
+  },
+  "keywords": [
+    "sqlite",
+    "csv",
+    "sql"
+  ]
 }
