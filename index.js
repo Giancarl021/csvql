@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('dotenv/config');
 const createDatabase = require('./src/services/database');
 
 const operations = {

@@ -1,10 +1,8 @@
-const createDatabase = require('better-sqlite3');
 const fs = require('fs');
 const { basename } = require('path');
 const { detect } = require('csv-string');
 const locate = require('../util/locate');
 const csv = require('fast-csv');
-const stripBom = require('strip-bom-stream');
 const createRowFormatter = require('../util/format-row');
 const getColumns = require('./column-parser');
 
@@ -14,6 +12,8 @@ const parseRow = require('../util/parse-row');
 const commaNumber = require('../util/comma-numbers');
 
 module.exports = async function (fromPath = null, persistPath = null, disk = null, parseNumbersWithCommas = false) {
+    const { default: createDatabase } = await import('better-sqlite3');
+    const { default: stripBom } = await import('strip-bom-stream');
     const database = createDatabase(disk || ':memory:');
 
     database.pragma('journal_mode = WAL');
